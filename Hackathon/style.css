@@ -1,0 +1,373 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: #f4f7f6;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container {
+    background: white;
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    width: 400px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background: #b01a2e; 
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #8b1424;
+}
+
+.hidden {
+    display: none;
+}
+
+#toggle-text {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+#toggle-link {
+    color: #b01a2e;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#message {
+    text-align: center;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+/* Dashboard Specific Styles */
+.dashboard-body {
+    align-items: flex-start;
+    background-color: #f4f7f6;
+}
+
+.dashboard-container {
+    display: flex;
+    width: 100vw;
+    height: 100vh;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: white;
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+}
+
+.sidebar h2 {
+    color: #b01a2e;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 20px;
+}
+
+.nav-links {
+    list-style: none;
+    flex-grow: 1;
+}
+
+.nav-links li {
+    padding: 15px 25px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+    display: block;
+}
+
+.nav-links li:hover, .nav-links li.active {
+    background-color: #fce8eb;
+    border-left: 4px solid #b01a2e;
+}
+
+.nav-links li:hover a, .nav-links li.active a {
+    color: #b01a2e;
+}
+
+.logout-btn {
+    margin: 20px;
+    width: calc(100% - 40px);
+    background: #555;
+}
+
+.logout-btn:hover {
+    background: #333;
+}
+
+.main-content {
+    flex-grow: 1;
+    padding: 40px;
+    overflow-y: auto;
+}
+
+.main-content header h1 {
+    color: #333;
+    margin-bottom: 30px;
+}
+
+.feed-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 15px;
+}
+
+.feed-card h4 {
+    margin-bottom: 10px;
+    color: #222;
+}
+
+.feed-card p {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+.tag {
+    font-size: 12px;
+    padding: 5px 10px;
+    border-radius: 15px;
+    color: white;
+    font-weight: bold;
+}
+
+.academic-tag { background-color: #007bff; }
+.event-tag { background-color: #28a745; }
+
+/* Academic Search Styles */
+.search-container {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+.search-container input {
+    flex-grow: 1;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+    margin: 0; 
+}
+
+.search-container button {
+    width: 120px;
+    margin: 0;
+}
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.teacher-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.teacher-card h4 {
+    color: #b01a2e;
+    margin-bottom: 5px;
+    font-size: 18px;
+}
+
+.teacher-card .dept {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    font-weight: 500;
+}
+
+.request-btn {
+    background: #007bff;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+.request-btn:hover {
+    background: #0056b3;
+}
+
+/* Event Card Styles */
+.event-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.event-card h4 {
+    color: #b01a2e;
+    margin-bottom: 5px;
+    font-size: 18px;
+}
+
+.club-name {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.event-card .desc {
+    font-size: 14px;
+    color: #444;
+    margin-top: 8px;
+    line-height: 1.4;
+}
+
+/* Profile Card Styles */
+.profile-card {
+    background: white;
+    padding: 30px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    max-width: 650px;
+    margin-top: 20px;
+}
+
+.profile-card label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #333;
+    font-size: 14px;
+}
+
+.profile-card input {
+    margin-top: 5px;
+    background-color: #fcfcfc;
+}
+
+.profile-card textarea {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-family: inherit;
+    resize: vertical;
+    background-color: #fcfcfc;
+    line-height: 1.5;
+}
+
+.save-btn {
+    margin-top: 25px;
+    width: auto;
+    padding: 10px 30px;
+}
+
+/* Notification Card Styles */
+.notification-card {
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.notif-content {
+    padding: 20px;
+}
+
+.notif-content h4 {
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.notif-content p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.time-stamp {
+    font-size: 12px;
+    color: #999;
+}
+
+.notif-actions {
+    display: flex;
+    border-top: 1px solid #eee;
+}
+
+.notif-actions button {
+    margin: 0;
+    border-radius: 0;
+    flex: 1;
+    padding: 12px;
+}
+
+.accept-btn {
+    background-color: #28a745;
+}
+
+.accept-btn:hover {
+    background-color: #218838;
+}
+
+.reject-btn {
+    background-color: #f8f9fa;
+    color: #b01a2e;
+    border-left: 1px solid #eee;
+}
+
+.reject-btn:hover {
+    background-color: #e2e6ea;
+}

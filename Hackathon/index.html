@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Who Skilled What - Amrita</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="form-box">
+            <h2 id="form-title">Login</h2>
+            
+            <!-- Changed <form> to <div> so the browser stops trying to refresh the page -->
+            <div id="auth-form">
+                <div id="register-fields" class="hidden">
+                    <input type="text" id="name" placeholder="Full Name" name="name">
+                    
+                    <!-- NEW: Organization Name (Hidden by default) -->
+                    <input type="text" id="org-name" placeholder="Club / Event Name (e.g., Asta Club)" class="hidden" style="margin-top: 10px;">
+                    
+                    <select id="reg-role" onchange="toggleRollNumber()">
+                        <option value="student">Student</option>
+                        <option value="teacher">Teacher / Professor</option>
+                        <option value="club_head">Club Head</option>
+                        <option value="event_organiser">Event Organiser</option>
+                    </select>
+
+                    <div id="reg-roll-container">
+                        <!-- Removed 'required' attribute -->
+                        <input type="text" id="reg-roll" placeholder="Roll Number">
+                    </div>
+                    <input type="text" id="department" placeholder="Department (e.g., Math & Computing)" name="department">
+                </div>
+
+                <input type="email" id="email" placeholder="College Outlook Email" name="email">
+                <input type="password" id="password" placeholder="Password" name="password">
+                
+                <!-- Changed to type="button" and added the onclick trigger -->
+                <button type="button" id="submit-btn" onclick="login()" class="submit-btn">Login</button>
+            </div>
+
+            <p id="toggle-text">Don't have an account? <span id="toggle-link" onclick="toggleForm()">Sign Up</span></p>
+            <div id="message"></div>
+        </div>
+    </div>
+    <script src="app.js?version=2"></script>
+    <script>
+        function toggleRollNumber() {
+            const role = document.getElementById("reg-role").value;
+            const rollContainer = document.getElementById("reg-roll-container");
+            const orgNameInput = document.getElementById("org-name");
+            
+            if (role === "teacher" || role === "event_organiser" || role === "club_head") {
+                rollContainer.style.display = "none";
+                document.getElementById("reg-roll").value = "STAFF"; 
+            } else {
+                rollContainer.style.display = "block";
+                document.getElementById("reg-roll").value = "";
+            }
+
+            // NEW: Show the Club/Event Name box only for those specific roles
+            if (role === "club_head" || role === "event_organiser") {
+                orgNameInput.classList.remove("hidden");
+            } else {
+                orgNameInput.classList.add("hidden");
+                orgNameInput.value = ""; 
+            }
+        }
+    </script>
+</body>
+</html>

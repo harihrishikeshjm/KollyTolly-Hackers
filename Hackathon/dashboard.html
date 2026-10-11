@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Who Skilled What</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <h2>WSW Amrita</h2>
+            <ul class="nav-links">
+                <li id="nav-home" class="active"><a href="#" onclick="showSection('home')">Dashboard</a></li>
+                <li id="nav-academic"><a href="#" onclick="showSection('academic')">Academic</a></li>
+                <li id="nav-non-academic"><a href="#" onclick="showSection('non-academic')">Non-Academic</a></li>
+                <li id="nav-profile"><a href="#" onclick="showSection('profile')">Profile</a></li>
+                <li id="nav-notifications"><a href="#" onclick="showSection('notifications')">Notifications</a></li>
+                <li id="nav-admin" style="display: none;"><a href="#" onclick="showSection('admin')">Admin Panel</a></li>
+            </ul>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header>
+                <h1 id="welcome-message">Welcome to your Dashboard</h1>
+            </header>
+            
+            <section id="home-section" class="content-section">
+                <!-- Post Creation Box (Hidden for Students & Admin) -->
+                <div id="publish-box" class="profile-card" style="margin-top: 0; margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 15px;">Publish an Opportunity</h3>
+                    <input type="text" id="post-title" placeholder="Title (e.g., Machine Learning Research)">
+                    
+                    <select id="post-type" style="margin-top: 5px; margin-bottom: 5px;">
+                        <option value="Academic">Academic (Research & Projects)</option>
+                        <option id="opt-non-academic" value="Non-Academic">Non-Academic (Clubs & Events)</option>
+                    </select>
+
+                    <input type="text" id="post-role" placeholder="Specific Role Needed (e.g., Python Developer, Photographer)">
+                    
+                    <textarea id="post-desc" rows="3" placeholder="Describe the responsibilities and requirements..."></textarea>
+                    
+                    <button class="save-btn" onclick="submitPost(this)" style="margin-top: 15px;">Publish Post</button>
+                </div>
+
+                <h3>Up to Date Feed</h3>
+                <div id="dynamic-feed">
+                    <!-- Real posts from the database will load here -->
+                </div>
+            </section>
+
+            <section id="academic-section" class="content-section hidden">
+                <h3>Academic Discovery</h3>
+                <p id="academic-desc">Search for professors by research domain, skills, or department.</p>
+                
+                <div class="search-container">
+                    <input type="text" id="academic-search" placeholder="e.g., Machine Learning, Real Analysis, Python...">
+                    <button onclick="searchTeachers()">Search</button>
+                </div>
+
+                <div id="teacher-results" class="results-grid">
+                    <!-- Search results will appear here -->
+                </div>
+            </section>
+            
+            <section id="non-academic-section" class="content-section hidden">
+                <h3>Clubs & Events</h3>
+                <p>Discover volunteering opportunities, club recruitments, and campus events tailored to your skills.</p>
+                
+                <div class="search-container">
+                    <input type="text" id="event-search" placeholder="e.g., Photography, Technical Support, Design...">
+                    <button onclick="searchEvents()">Search</button>
+                </div>
+
+                <div id="event-results" class="results-grid">
+                    <!-- Event results will appear here -->
+                </div>
+            </section>
+            
+            <section id="profile-section" class="content-section hidden">
+                <h3>Your Profile</h3>
+                <p>Keep your details updated so organizers and professors can accurately match with you.</p>
+                
+                <div class="profile-card">
+                    <form id="profile-form" onsubmit="event.preventDefault();">
+                        <!-- Primary Details -->
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label>Full Name</label>
+                                <input type="text" id="profile-name" placeholder="Enter Full Name">
+                            </div>
+                            <div id="profile-roll-container">
+                                <label>Roll Number</label>
+                                <input type="text" id="profile-roll" placeholder="Enter ID">
+                            </div>
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label>Year of Joined</label>
+                                <input type="text" id="profile-grad" placeholder="e.g., 2024">
+                            </div>
+                            <div>
+                                <label>Department</label>
+                                <input type="text" id="profile-dept" placeholder="e.g., Mathematics and Computing">
+                            </div>
+                        </div>
+
+                        <label>Email ID</label>
+                        <input type="text" id="profile-email" readonly style="background-color: #eee; cursor: not-allowed;">
+
+                        <!-- Change Password Section -->
+                        <div id="change-password-section" style="margin-top: 20px;">
+                            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
+                            <h4 style="color: #b01a2e; margin-bottom: 10px; font-size: 16px;">Security</h4>
+                            <label>New Password</label>
+                            <input type="password" id="profile-new-password" placeholder="Enter new password">
+                            <button type="button" onclick="updatePassword()" class="submit-btn" style="margin-top: 10px; width: auto; padding: 8px 16px;">Update Password</button>
+                            <p id="password-msg" style="margin-top: 10px; font-size: 14px;"></p>
+                        </div>
+
+                        <hr style="margin: 25px 0; border: 0; border-top: 1px solid #ddd;">
+
+                        <!-- Academic Area -->
+                        <h4 style="color: #b01a2e; margin-bottom: 10px; font-size: 16px;">Academic Profile</h4>
+                        <label>Skills</label>
+                        <input type="text" id="profile-acad-skills" placeholder="e.g., Python, Machine Learning...">
+                        
+                        <label>Interested Area</label>
+                        <input type="text" id="profile-acad-interests" placeholder="e.g., Data Science, Algorithms...">
+
+                        <!-- Non-Academic Area -->
+                        <div id="non-acad-profile-section">
+                            <hr style="margin: 25px 0; border: 0; border-top: 1px solid #ddd;">
+                            <h4 style="color: #b01a2e; margin-bottom: 10px; font-size: 16px;">Non-Academic Profile</h4>
+                            <label>Skills</label>
+                            <input type="text" id="profile-nonacad-skills" placeholder="e.g., Photography, Event Management...">
+                            
+                            <label>Interested Area</label>
+                            <input type="text" id="profile-nonacad-interests" placeholder="e.g., Design, Tech Support...">
+                        </div>
+
+                        <button type="button" class="save-btn" onclick="saveProfile(this)">Save Profile</button>
+                    </form>
+                </div>
+            </section>
+            
+            <section id="notifications-section" class="content-section hidden">
+                <h3>Notifications & Pending Requests</h3>
+                <p>Manage incoming applications and collaboration requests.</p>
+                
+                <div id="notifications-list" class="results-grid">
+                    <!-- Notifications will be injected here -->
+                </div>
+            </section>
+
+            <section id="admin-section" class="content-section hidden">
+                <h3>Admin Control Panel</h3>
+                <p>Review and approve pending staff and organizer accounts.</p>
+                
+                <div id="admin-results" class="results-grid">
+                    <p>Loading pending accounts...</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function escapeHTML(str) {
+            if (!str) return "";
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag] || tag));
+        }
+
+        document.addEventListener("DOMContentLoaded", async () => {
+            const role = localStorage.getItem("userRole");
+            if (!role) {
+                window.location.href = "index.html";
+                return;
+            }
+            
+            // Default fallback message
+            document.getElementById("welcome-message").innerText = `Welcome, ${role.toUpperCase()}!`;
+            
+            const savedEmail = localStorage.getItem("userEmail");
+            if (savedEmail) {
+                document.getElementById("profile-email").value = savedEmail;
+                
+                // Ask the database for the user's details to personalize the header
+                try {
+                    const formData = new URLSearchParams();
+                    formData.append("email", savedEmail);
+                    const response = await fetch("http://localhost:8080/api/get_profile", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: formData.toString()
+                    });
+                    
+                    if (response.ok) {
+                        const data = await response.json();
+                        
+                        // CUSTOM WELCOME LOGIC
+                        if (role === "club_head" && data.org) {
+                            document.getElementById("welcome-message").innerText = `Welcome, ${data.org.toUpperCase()} CLUB HEAD!`;
+                        } else if (role === "event_organiser" && data.org) {
+                            document.getElementById("welcome-message").innerText = `Welcome, ${data.org.toUpperCase()} ORGANISER!`;
+                        } else if (data.name) {
+                            document.getElementById("welcome-message").innerText = `Welcome, ${data.name.toUpperCase()}!`;
+                        }
+                    }
+                } catch (error) {
+                    console.log("Could not fetch user profile.");
+                }
+            }
+            
+            // ... (Keep the rest of your role checks like hiding the admin/teacher tabs below this line) ...
+
+            if (role === "admin") {
+                const adminNav = document.getElementById("nav-admin");
+                if (adminNav) adminNav.style.display = "block";
+                
+                showSection('admin'); 
+                
+                const allNavLinks = document.querySelectorAll(".nav-links li");
+                allNavLinks.forEach(link => {
+                    if (link.id !== "nav-admin" && !link.innerHTML.includes("Logout")) {
+                        link.style.display = "none";
+                    }
+                });
+                
+                const publishBox = document.getElementById("publish-box");
+                if (publishBox) publishBox.style.display = "none";
+            } else if (role === "teacher") {
+                document.getElementById("nav-non-academic").style.display = "none";
+                document.getElementById("non-acad-profile-section").style.display = "none";
+                document.getElementById("profile-roll-container").style.display = "none";
+                
+                const nonAcadOpt = document.getElementById("opt-non-academic");
+                if (nonAcadOpt) nonAcadOpt.remove();
+                
+                document.getElementById("academic-desc").innerText = "Search for students by skills, technical stack, or department.";
+            } else if (role === "event_organiser" || role === "club_head") {
+                // Hide the Roll Number box in the profile for club heads and organizers
+                document.getElementById("profile-roll-container").style.display = "none";
+            } else if (role === "student") {
+                document.getElementById("publish-box").style.display = "none";
+            }
+
+            if (typeof loadFeed === "function") {
+                loadFeed();
+            }
+        });
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.add('hidden'));
+            
+            const targetSection = document.getElementById(sectionId + '-section');
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            document.querySelectorAll('.nav-links li').forEach(li => {
+                if (li.classList) li.classList.remove('active');
+            });
+            
+            const activeNav = document.getElementById('nav-' + sectionId);
+            if (activeNav) {
+                activeNav.classList.add('active');
+            }
+
+            if (sectionId === 'notifications') {
+                if (typeof loadNotifications === 'function') loadNotifications();
+            }
+            if (sectionId === 'home') {
+                if (typeof loadFeed === 'function') loadFeed();
+            }
+            if (sectionId === 'profile') {
+                if (typeof loadProfile === 'function') loadProfile();
+            }
+            if (sectionId === 'admin') {
+                if (typeof loadAdminPanel === 'function') loadAdminPanel();
+            }
+        }
+
+        function logout() {
+            localStorage.clear();
+            window.location.href = "index.html";
+        }
+
+        async function searchTeachers() {
+            const query = document.getElementById('academic-search').value;
+            const resultsDiv = document.getElementById('teacher-results');
+            const userRole = localStorage.getItem("userRole");
+            
+            resultsDiv.innerHTML = "<p>Searching database...</p>"; 
+
+            const formData = new URLSearchParams();
+            formData.append("query", query);
+            formData.append("role", userRole);
+
+            try {
+                const response = await fetch("http://localhost:8080/api/search_teachers", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    const results = await response.json();
+                    resultsDiv.innerHTML = ""; 
+
+                    if(results.length === 0) {
+                        resultsDiv.innerHTML = `<p>No ${userRole === 'teacher' ? 'students' : 'professors'} found matching your search.</p>`;
+                        return;
+                    }
+
+                    results.forEach(r => {
+                        resultsDiv.innerHTML += `
+                            <div class="teacher-card">
+                                <h4>${escapeHTML(r.name)}</h4>
+                                <p class="dept">${escapeHTML(r.dept)}</p>
+                                <p><strong>Skills:</strong> ${escapeHTML(r.skills)}</p>
+                                <p><strong>Interests:</strong> ${escapeHTML(r.interest)}</p>
+                                <button class="request-btn" onclick="sendRequest('${escapeHTML(r.name)}', this)">Send Request</button>
+                            </div>
+                        `;
+                    });
+                }
+            } catch(e) {
+                resultsDiv.innerHTML = "<p>Database connection failed.</p>";
+            }
+        }
+
+        async function sendRequest(teacherName, buttonElement) {
+            let email = localStorage.getItem("userEmail") || "";
+            
+            const formData = new URLSearchParams();
+            formData.append("sender_email", email);
+            formData.append("receiver_name", teacherName);
+            formData.append("request_type", "Academic");
+            formData.append("context", "Sent a research collaboration request.");
+
+            try {
+                const response = await fetch("http://localhost:8080/api/send_request", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    buttonElement.innerText = "Request Sent";
+                    buttonElement.style.backgroundColor = "#28a745"; 
+                    buttonElement.style.cursor = "default";
+                    buttonElement.disabled = true;
+                }
+            } catch(e) {
+                console.log("Error sending request");
+            }
+        }
+
+        async function searchEvents() {
+            const query = document.getElementById('event-search').value;
+            const resultsDiv = document.getElementById('event-results');
+            resultsDiv.innerHTML = "<p>Searching database...</p>";
+
+            const formData = new URLSearchParams();
+            formData.append("query", query);
+
+            try {
+                const response = await fetch("http://localhost:8080/api/search_events", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    const events = await response.json();
+                    resultsDiv.innerHTML = "";
+
+                    if(events.length === 0) {
+                        resultsDiv.innerHTML = "<p>No events found matching your search.</p>";
+                        return;
+                    }
+
+                    events.forEach(e => {
+                        resultsDiv.innerHTML += `
+                            <div class="event-card">
+                                <h4>${escapeHTML(e.name)}</h4>
+                                <p class="club-name">Posted by: ${escapeHTML(e.club)}</p>
+                                <p><strong>Role Needed:</strong> ${escapeHTML(e.role)}</p>
+                                <p class="desc">${escapeHTML(e.desc)}</p>
+                                <button class="request-btn" onclick="applyRole('${escapeHTML(e.role)}', this)">Apply for Role</button>
+                            </div>
+                        `;
+                    });
+                }
+            } catch(e) {
+                resultsDiv.innerHTML = "<p>Database connection failed.</p>";
+            }
+        }
+
+        async function applyRole(roleName, buttonElement) {
+            let email = localStorage.getItem("userEmail") || "";
+            
+            const formData = new URLSearchParams();
+            formData.append("sender_email", email);
+            formData.append("receiver_name", "Event Organizer");
+            formData.append("request_type", "Non-Academic");
+            formData.append("context", `Applied for role: ${roleName}`);
+
+            try {
+                const response = await fetch("http://localhost:8080/api/send_request", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    buttonElement.innerText = "Applied";
+                    buttonElement.style.backgroundColor = "#28a745";
+                    buttonElement.style.cursor = "default";
+                    buttonElement.disabled = true;
+                }
+            } catch(e) {
+                console.log("Error sending application");
+            }
+        }
+
+        async function loadProfile() {
+            const email = localStorage.getItem("userEmail");
+            if (!email) return;
+
+            const formData = new URLSearchParams();
+            formData.append("email", email);
+
+            try {
+                const response = await fetch("http://localhost:8080/api/get_profile", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+
+                    if (data.name) document.getElementById("profile-name").value = data.name;
+                    if (data.roll) document.getElementById("profile-roll").value = data.roll;
+                    if (data.dept) document.getElementById("profile-dept").value = data.dept;
+
+                    if (data.skills && data.skills.includes(" | Non-Academic: ")) {
+                        let skillParts = data.skills.split(" | Non-Academic: ");
+                        document.getElementById("profile-acad-skills").value = skillParts[0].replace("Academic: ", "");
+                        document.getElementById("profile-nonacad-skills").value = skillParts[1];
+                    }
+
+                    if (data.projects && data.projects.includes(" | Non-Academic: ")) {
+                        let interestParts = data.projects.split(" | Non-Academic: ");
+                        document.getElementById("profile-acad-interests").value = interestParts[0].replace("Academic: ", "");
+                        document.getElementById("profile-nonacad-interests").value = interestParts[1];
+                    }
+                }
+            } catch (error) {
+                console.log("Could not fetch profile data.");
+            }
+        }
+
+        async function saveProfile(buttonElement) {
+            const email = localStorage.getItem("userEmail");
+            
+            const acadSkills = document.getElementById("profile-acad-skills").value;
+            const nonAcadSkills = document.getElementById("profile-nonacad-skills").value;
+            const acadInterests = document.getElementById("profile-acad-interests").value;
+            const nonAcadInterests = document.getElementById("profile-nonacad-interests").value;
+
+            const combinedSkills = `Academic: ${acadSkills} | Non-Academic: ${nonAcadSkills}`;
+            const combinedInterests = `Academic: ${acadInterests} | Non-Academic: ${nonAcadInterests}`;
+
+            if (!email) {
+                alert("Session expired. Please log in again.");
+                return;
+            }
+
+            const formData = new URLSearchParams();
+            formData.append("email", email);
+            formData.append("skills", combinedSkills);
+            formData.append("projects", combinedInterests);
+
+            try {
+                const response = await fetch("http://localhost:8080/api/update_profile", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    buttonElement.innerText = "Saved to Database!";
+                    buttonElement.style.backgroundColor = "#28a745"; 
+                    setTimeout(() => {
+                        buttonElement.innerText = "Save Profile";
+                        buttonElement.style.backgroundColor = "#b01a2e"; 
+                    }, 2000);
+                } else {
+                    alert("Failed to save profile.");
+                }
+            } catch (error) {
+                alert("Server connection failed.");
+            }
+        }
+
+        async function updatePassword() {
+            const newPassword = document.getElementById('profile-new-password').value;
+            const email = localStorage.getItem('userEmail');
+            const msg = document.getElementById('password-msg');
+
+            if (!newPassword) {
+                msg.style.color = '#b01a2e';
+                msg.innerText = 'Please enter a new password.';
+                return;
+            }
+
+            msg.style.color = 'black';
+            msg.innerText = 'Updating...';
+
+            const formData = new URLSearchParams();
+            formData.append("email", email);
+            formData.append("new_password", newPassword);
+
+            try {
+                const response = await fetch("http://localhost:8080/api/change_password", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    msg.style.color = '#28a745';
+                    msg.innerText = 'Password updated successfully!';
+                    document.getElementById('profile-new-password').value = '';
+                    setTimeout(() => { msg.innerText = ''; }, 3000);
+                } else {
+                    msg.style.color = '#b01a2e';
+                    msg.innerText = 'Failed to update password.';
+                }
+            } catch (e) {
+                msg.style.color = '#b01a2e';
+                msg.innerText = 'Database connection failed.';
+            }
+        }
+
+        async function loadNotifications() {
+            const listDiv = document.getElementById('notifications-list');
+            listDiv.innerHTML = "<p>Loading requests...</p>";
+            
+            try {
+                const response = await fetch("http://localhost:8080/api/get_requests");
+                if (response.ok) {
+                    const requests = await response.json(); 
+                    listDiv.innerHTML = "";
+
+                    if (requests.length === 0) {
+                        listDiv.innerHTML = "<p>You have no pending requests.</p>";
+                        return;
+                    }
+
+                    requests.forEach(n => {
+                        listDiv.innerHTML += `
+                            <div class="notification-card" id="notif-${n.id}">
+                                <div class="notif-content">
+                                    <h4>Request from ${escapeHTML(n.sender)}</h4>
+                                    <p>${escapeHTML(n.context)}</p>
+                                    <span class="time-stamp">${escapeHTML(n.time)}</span>
+                                </div>
+                                <div class="notif-actions">
+                                    <button class="accept-btn" onclick="handleRequest(${n.id}, 'accepted')">Accept</button>
+                                    <button class="reject-btn" onclick="handleRequest(${n.id}, 'rejected')">Reject</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (e) {
+                listDiv.innerHTML = "<p>Failed to connect to server.</p>";
+            }
+        }
+
+        async function handleRequest(id, status) {
+            const card = document.getElementById(`notif-${id}`);
+            
+            const formData = new URLSearchParams();
+            formData.append("id", id);
+            formData.append("status", status);
+
+            try {
+                const response = await fetch("http://localhost:8080/api/update_status", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    if (status === 'accepted') {
+                        card.innerHTML = `<p style="color: #28a745; font-weight: bold; padding: 20px;">✅ Request Accepted! The student has been notified.</p>`;
+                    } else {
+                        card.innerHTML = `<p style="color: #b01a2e; font-weight: bold; padding: 20px;">❌ Request Rejected.</p>`;
+                    }
+                    setTimeout(() => card.remove(), 2500);
+                }
+            } catch(e) {
+                alert("Error updating status.");
+            }
+        }
+
+        async function submitPost(buttonElement) {
+            let email = localStorage.getItem("userEmail") || "";
+            
+            const title = document.getElementById("post-title").value;
+            const type = document.getElementById("post-type").value;
+            const role = document.getElementById("post-role").value;
+            const desc = document.getElementById("post-desc").value;
+
+            if (!title || !role || !desc) {
+                alert("Please fill out all fields before publishing.");
+                return;
+            }
+
+            const formData = new URLSearchParams();
+            formData.append("poster_email", email);
+            formData.append("type", type);
+            formData.append("title", title);
+            formData.append("role_needed", role);
+            formData.append("description", desc);
+
+            try {
+                const response = await fetch("http://localhost:8080/api/post_opportunity", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    buttonElement.innerText = "Published!";
+                    buttonElement.style.backgroundColor = "#28a745"; 
+                    
+                    setTimeout(() => {
+                        buttonElement.innerText = "Publish Post";
+                        buttonElement.style.backgroundColor = "#b01a2e";
+                        document.getElementById("post-title").value = "";
+                        document.getElementById("post-role").value = "";
+                        document.getElementById("post-desc").value = "";
+                        loadFeed(); 
+                    }, 1500);
+                }
+            } catch(e) {
+                alert("Failed to publish post.");
+            }
+        }
+
+        async function loadFeed() {
+            const feedDiv = document.getElementById("dynamic-feed");
+            feedDiv.innerHTML = "<p>Loading latest opportunities...</p>";
+            
+            try {
+                const response = await fetch("http://localhost:8080/api/get_opportunities");
+                if (response.ok) {
+                    const posts = await response.json();
+                    feedDiv.innerHTML = "";
+
+                    if (posts.length === 0) {
+                        feedDiv.innerHTML = "<p>No opportunities posted yet. Be the first!</p>";
+                        return;
+                    }
+
+                    posts.forEach(p => {
+                        const tagClass = p.type === "Academic" ? "academic-tag" : "event-tag";
+                        feedDiv.innerHTML += `
+                            <div class="feed-card">
+                                <h4>${escapeHTML(p.title)}</h4>
+                                <p style="font-size: 14px; margin-bottom: 5px;"><strong>Role Needed:</strong> ${escapeHTML(p.role)}</p>
+                                <p>${escapeHTML(p.desc)}</p>
+                                <span class="tag ${tagClass}">${escapeHTML(p.type)}</span>
+                                <p style="font-size: 11px; color: #999; margin-top: 15px;">Posted by: ${escapeHTML(p.poster)}</p>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (e) {
+                feedDiv.innerHTML = "<p>Failed to load feed from server.</p>";
+            }
+        }
+
+        async function loadAdminPanel() {
+            const resultsDiv = document.getElementById('admin-results');
+            resultsDiv.innerHTML = "<p>Loading pending accounts...</p>";
+
+            try {
+                const response = await fetch("http://localhost:8080/api/get_pending_users");
+                if (response.ok) {
+                    const users = await response.json();
+                    resultsDiv.innerHTML = "";
+
+                    if (users.length === 0) {
+                        resultsDiv.innerHTML = "<p>No pending accounts to approve.</p>";
+                        return;
+                    }
+
+                    users.forEach(u => {
+                        // Dynamically create the Club/Event display line if it exists
+                        let orgDisplay = "";
+                        if (u.role === "club_head" || u.role === "event_organiser") {
+                            orgDisplay = `<p style="color: #b01a2e; margin-bottom: 5px;"><strong>For:</strong> ${escapeHTML(u.org)}</p>`;
+                        }
+
+                        resultsDiv.innerHTML += `
+                            <div class="teacher-card" id="user-${escapeHTML(u.email)}">
+                                <h4>${escapeHTML(u.name)}</h4>
+                                <p class="dept" style="margin-bottom: 5px;">Requested Role: ${escapeHTML(u.role)}</p>
+                                ${orgDisplay}
+                                <p><strong>Email:</strong> ${escapeHTML(u.email)}</p>
+                                <p><strong>Dept:</strong> ${escapeHTML(u.dept)}</p>
+                                <button class="request-btn" style="background-color: #28a745;" onclick="approveAccount('${escapeHTML(u.email)}', this)">Approve Account</button>
+                            </div>
+                        `;
+                    });
+                }
+            } catch (e) {
+                resultsDiv.innerHTML = "<p>Failed to load accounts.</p>";
+            }
+        }
+
+        async function approveAccount(email, btnElement) {
+            const formData = new URLSearchParams();
+            formData.append("email", email);
+
+            try {
+                const response = await fetch("http://localhost:8080/api/approve_user", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: formData.toString()
+                });
+
+                if (response.ok) {
+                    btnElement.innerText = "Approved!";
+                    btnElement.disabled = true;
+                    setTimeout(() => {
+                        const targetCard = document.getElementById(`user-${email}`);
+                        if (targetCard) targetCard.remove();
+                    }, 1500);
+                }
+            } catch (error) {
+                alert("Failed to approve user.");
+            }
+        }
+    </script>
+</body>
+</html>
